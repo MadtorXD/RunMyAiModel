@@ -133,7 +133,7 @@
       <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter animate-in fade-in slide-in-from-top-4 duration-1000 relative z-10">
         Run My <span class="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">AI</span>&#32;<span class="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Model</span>.
       </h1>
-      <p class="text-xl leading-8 text-gray-300 max-w-2xl mx-auto font-normal animate-in fade-in slide-in-from-top-4 duration-1000 delay-150 relative z-10">Find the perfect model for your GPU in seconds</p>
+      <p class="text-xl leading-8 text-gray-300 max-w-2xl mx-auto font-normal animate-in fade-in slide-in-from-top-4 duration-1000 delay-150 relative z-10">Find the perfect AI model for your GPU in seconds</p>
     </div>
 
     <div class="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
