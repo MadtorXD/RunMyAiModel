@@ -13,7 +13,7 @@
   
   <div class="flex gap-8">
     <a 
-      href="https://github.com" 
+      href="https://github.com/MadtorXD/RunMyAiModel" 
       target="_blank" 
       rel="noopener noreferrer"
       class="hover:text-white transition-colors"
