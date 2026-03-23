@@ -525,7 +525,7 @@
                <div class="space-y-4">
                  <h4 class="text-[12px] font-black text-white uppercase tracking-widest border-b border-white/10 pb-2">Market Rate Estimate</h4>
                  <p class="text-[14px] text-gray-400 leading-loose">
-                   The blue pill displays the live average market rate on platforms like <span class="text-sky-400 font-bold underline decoration-sky-500/30">RunPod</span> or Lambda. This helps you decide if a 44¢ rental is better than a $2,000 upgrade.
+                   The blue pill displays the live average market rate on platforms like <a href="https://runpod.io?ref=f43w8geb" target="_blank" rel="noopener noreferrer" class="text-sky-400 font-bold underline decoration-sky-500/30 hover:text-sky-300 transition-colors">RunPod</a> or Lambda. This helps you decide if a 44¢ rental is better than a $2,000 upgrade.
                  </p>
                </div>
              </div>

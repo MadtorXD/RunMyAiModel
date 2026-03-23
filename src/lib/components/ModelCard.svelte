@@ -164,7 +164,7 @@
         </div>
         {#if model.cheapestCloud}
           <a 
-            href="https://www.runpod.io/console/gpu-cloud"
+            href="https://www.runpod.io/console/gpu-cloud?ref=f43w8geb"
             target="_blank" rel="noopener noreferrer"
             class="inline-flex items-center gap-1.5 mt-2 px-2 py-1 rounded bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[10px] font-mono hover:bg-sky-500/20 transition-colors"
           >
