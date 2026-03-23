@@ -61,7 +61,7 @@
     </div>
     
     <!-- Ecosystem links -->
-    <div class="flex gap-2">
+    <div class="flex flex-col md:flex-row gap-2 items-end md:items-center">
       <!-- Deploy commands -->
       <div class="relative group/menu">
         <button 
@@ -132,7 +132,7 @@
         {/if}
       </div>
       
-      <div class="grid grid-cols-2 gap-2 text-xs">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-2 text-xs">
         <div>
           <span class="text-gray-100 block">Context</span>
           <span class="text-white font-bold">{model.maxCtxK > 0 ? contextLabel(model.maxCtxK) : '—'}</span>

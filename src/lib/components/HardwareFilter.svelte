@@ -19,7 +19,7 @@
     selectedGpu = $bindable(null), 
     gpuCount = $bindable(1),
     customVram = $bindable(null),
-    systemRam = $bindable(16),
+    systemRam = $bindable(0),
     minContext = $bindable(null),
     minTokSec = $bindable(null),
     reqFeatures = $bindable([]),
@@ -215,13 +215,13 @@
 
 <div class="w-full bg-surface border border-border rounded-geist p-6 shadow-2xl space-y-6">
   
-    <div class="grid grid-cols-3 gap-6 items-start text-left">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start text-left">
       
       <!-- Row 1: GPU, GPUs & VRAM combined container -->
-      <div class="col-span-3 flex flex-row gap-4 items-end">
+      <div class="col-span-1 md:col-span-3 flex flex-col md:flex-row gap-4 md:items-end">
         
         <!-- GPU -->
-        <div class="relative w-full flex-1">
+        <div class="relative w-full md:flex-1 order-1 md:order-1">
           <label class="block text-xs font-semibold text-gray-200 uppercase tracking-widest mb-2" for="gpu-search">
             Select Your GPU
           </label>
@@ -280,7 +280,7 @@
         </div>
 
         <!-- GPUS count -->
-        <div class="relative w-[72px] shrink-0">
+        <div class="relative w-full md:w-[72px] shrink-0 order-4 md:order-2">
           <label class="block text-xs font-semibold text-gray-200 uppercase tracking-widest mb-2" for="gpu-count">
             GPUs {@render helpIcon("Number of GPUs. VRAM scales with this count for multi-GPU setups.")}
           </label>
@@ -316,12 +316,12 @@
         </div>
 
         <!-- OR divider -->
-        <div class="pb-3 px-1 text-[10px] font-bold tracking-widest uppercase text-gray-400 italic shrink-0 pointer-events-none">
+        <div class="md:pb-3 py-1 md:py-0 px-1 text-[10px] font-bold tracking-widest uppercase text-gray-400 italic text-center md:text-left shrink-0 pointer-events-none order-2 md:order-3">
           or
         </div>
 
         <!-- VRAM -->
-        <div class="relative w-28 shrink-0">
+        <div class="relative w-full md:w-28 shrink-0 order-3 md:order-4">
           <label class="block text-xs font-semibold text-gray-200 uppercase tracking-widest mb-2" for="custom-vram">
             {isAppleSilicon ? 'Memory (GB)' : 'VRAM (GB)'} {@render helpIcon(isAppleSilicon ? "Total Unified Memory." : "Total video memory. Enter a custom value if no specific GPU is selected.")}
           </label>

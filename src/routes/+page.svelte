@@ -12,7 +12,7 @@
   let selectedGpu = $state<any>(null);
   let gpuCount = $state(1);
   let customVram = $state<number | null>(null);
-  let systemRam = $state(16);
+  let systemRam = $state(0);
   let minContext = $state<number | null>(null);
   let minTokSec = $state<number | null>(null);
   let reqFeatures = $state<string[]>([]);
@@ -122,7 +122,7 @@
 
 <main class="min-h-screen relative overflow-hidden flex flex-col items-center pt-8 px-6 font-sans bg-transparent">
   <SmartGrid />
-  <header class="absolute top-0 w-full p-6 flex justify-end z-50 max-w-[1072px] left-1/2 -translate-x-1/2">
+  <header class="absolute top-0 w-full p-6 flex justify-center md:justify-end z-50 max-w-[1072px] left-1/2 -translate-x-1/2">
     <a href="/guide" class="text-sm font-medium text-gray-400 hover:text-white transition-colors bg-surface border border-border px-4 py-1.5 rounded-geist shadow-lg flex items-center gap-2">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
       Beginner's Guide
@@ -162,8 +162,8 @@
               <!-- Tooltip -->
               <div class="relative group flex items-center">
                 <svg class="w-4 h-4 text-gray-500 hover:text-gray-200 cursor-help transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-72 p-4 bg-[#0a0a0a] border border-[#333] rounded-geist shadow-[0_0_20px_rgba(0,0,0,0.5)] text-[11px] text-gray-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0 transition-all duration-200 z-50 pointer-events-none leading-relaxed overflow-visible">
-                  <div class="absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-[#0a0a0a] border-b border-r border-[#333] rotate-45"></div>
+                <div class="absolute bottom-full right-[-8px] md:right-auto md:left-1/2 md:-translate-x-1/2 mb-3 w-[260px] md:w-72 p-4 bg-[#0a0a0a] border border-[#333] rounded-geist shadow-[0_0_20px_rgba(0,0,0,0.5)] text-[11px] text-gray-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0 transition-all duration-200 z-50 pointer-events-none leading-relaxed overflow-visible">
+                  <div class="absolute -bottom-[6px] right-[12px] md:right-auto md:left-1/2 md:-translate-x-1/2 w-2.5 h-2.5 bg-[#0a0a0a] border-b border-r border-[#333] rotate-45"></div>
                   <div class="space-y-2">
                     {#if rankedBy === 'mmlu'}
                       <p><strong class="text-white font-semibold">MMLU</strong> measures general knowledge across 57 subjects. Higher = more capable.</p>
