@@ -194,7 +194,7 @@
       </div>
       
       {#if !hasSearched}
-        <div class="w-full py-16 border border-border border-dashed rounded-geist flex items-center justify-center text-gray-400 text-sm">Select a GPU or enter your VRAM to see results.</div>
+        <div class="w-full py-16 border border-border border-dashed rounded-geist flex items-center justify-center text-gray-400 text-sm text-center px-4">Select a GPU or enter your VRAM to see results.</div>
       {:else}
         {#if fitsModels.length > 0}
           <div class="mb-12 relative border-2 border-dotted border-green-900/60 rounded-geist p-6 shadow-2xl isolate overflow-hidden">
