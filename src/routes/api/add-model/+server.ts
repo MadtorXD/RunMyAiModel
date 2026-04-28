@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
+import { decodeBase64, encodeBase64 } from '$lib/utils/base64';
 
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
@@ -25,6 +26,8 @@ export async function POST({ request }) {
     const swe = data.swe ? parseFloat(data.swe) : null;
     const lmsys = data.lmsys ? parseFloat(data.lmsys) : null;
     const features = data.features || [];
+    const quantization = data.quantization || "fp16";
+    const bpw = data.bpw ? parseFloat(data.bpw) : (quantization === "fp16" ? 16 : 4);
 
     const infoRes = await fetch(`https://huggingface.co/api/models/${repoId}`);
     if (!infoRes.ok) throw new Error(`Failed to fetch model info from HuggingFace API (${infoRes.status})`);
@@ -33,11 +36,12 @@ export async function POST({ request }) {
     let totalParams = 0;
     if (info.safetensors && info.safetensors.total) {
        totalParams = info.safetensors.total;
+    } else {
         throw new Error("Could not find total parameters in safetensors metadata. Ensure the model has safetensors.");
     }
 
     const paramsB = (totalParams / 1e9).toFixed(2);
-    const weightGb = (parseFloat(paramsB) * 2).toFixed(2);
+    const weightGb = (parseFloat(paramsB) * (bpw / 8)).toFixed(2);
 
     const configRes = await fetch(`https://huggingface.co/${repoId}/raw/main/config.json`);
     if (!configRes.ok) throw new Error(`Failed to fetch config.json from HuggingFace (${configRes.status})`);
@@ -65,13 +69,13 @@ export async function POST({ request }) {
     let friendlyName = nameStr.replace(/-/g, ' ').replace(/Instruct/gi, '').replace(/hf/gi, '').trim();
     friendlyName = friendlyName.replace(/\s+/g, ' ');
 
-    const idAttr = nameStr.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-fp16';
+    const idAttr = nameStr.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + quantization.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
     const newModel = {
       id: idAttr,
       name: friendlyName,
       params_b: parseFloat(paramsB),
-      quantization: "fp16",
+      quantization: quantization,
       weight_gb: parseFloat(weightGb),
       kv_per_1k_gb: parseFloat(kvPer1kGb.toFixed(3)),
       max_context_k: Math.floor(maxCtxRaw / 1000) || 4,
@@ -79,7 +83,7 @@ export async function POST({ request }) {
       mmlu_score: mmlu,
       swe_bench_score: swe,
       features: features,
-      notes: `${layers} layers, ${kvHeads} KV heads, head_dim ${headDim}. Auto-fetched FP16 from ${repoId}.`,
+      notes: `${layers} layers, ${kvHeads} KV heads, head_dim ${headDim}. Auto-fetched ${quantization} (${bpw} bpw) from ${repoId}.`,
       lmsys_score: lmsys
     };
 
@@ -102,7 +106,7 @@ export async function POST({ request }) {
       const getJson = await getRes.json();
       const sha = getJson.sha;
       
-      const contentStr = (globalThis as any).Buffer ? (globalThis as any).Buffer.from(getJson.content, 'base64').toString('utf8') : atob(getJson.content);
+      const contentStr = decodeBase64(getJson.content);
       const existing = JSON.parse(contentStr);
       
       if (existing.find((m: any) => m.id === newModel.id)) {
@@ -112,7 +116,7 @@ export async function POST({ request }) {
       existing.unshift(newModel);
       
       const newJsonStr = JSON.stringify(existing, null, 2);
-      const newContentStr = (globalThis as any).Buffer ? (globalThis as any).Buffer.from(newJsonStr, 'utf8').toString('base64') : btoa(newJsonStr);
+      const newContentStr = encodeBase64(newJsonStr);
       
       const putRes = await fetch(apiUrl, {
         method: 'PUT',

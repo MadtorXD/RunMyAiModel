@@ -144,7 +144,8 @@ export function bucketModels(allModels: any[], vram: number, bandwidth: number |
       return true;
     })
     .map((m) => {
-    const totalAtMinCtx = m.weight_gb + m.kv_per_1k_gb;
+    const ctxK = Math.max(minContextK || 1, 1);
+    const totalAtMinCtx = m.weight_gb + (m.kv_per_1k_gb * ctxK);
     const fitsInVram = vram >= totalAtMinCtx;
 
     let offloadInfo = null;
@@ -189,8 +190,17 @@ export function bucketModels(allModels: any[], vram: number, bandwidth: number |
     const meetsMinCtx = effectiveMinCtx != null ? maxCtxK >= effectiveMinCtx : true;
 
     let tokPerSec = calcTokPerSec(m, bandwidth);
-    if (tokPerSec != null && offloadInfo) {
-      tokPerSec = Math.round(tokPerSec * offloadInfo.speedMultiplier);
+    if (tokPerSec != null) {
+      if (offloadInfo) {
+        tokPerSec = Math.round(tokPerSec * offloadInfo.speedMultiplier);
+      }
+      // Penalty for KV Cache offloading to RAM
+      if (ctxInfo && ctxInfo.ramCtxK > 0) {
+        const kvRatio = ctxInfo.ramCtxK / (ctxInfo.vramCtxK + ctxInfo.ramCtxK);
+        // KV RAM access is extremely slow; 80% penalty for full KV offload
+        const kvPenalty = 1 - (kvRatio * 0.8);
+        tokPerSec = Math.round(tokPerSec * kvPenalty);
+      }
     }
     const meetsMinSpeed = minTokPerSec != null && tokPerSec != null ? tokPerSec >= minTokPerSec : true;
 

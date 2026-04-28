@@ -1,0 +1,57 @@
+[
+  {
+    "id": "c6f28a3e-8ceb-4f25-8057-6f53fbcbb374",
+    "type": "hardware",
+    "title": "Intel \"Wildcat Lake\" Outruns Apple's MacBook Neo and Its Successor in First Benchmarks",
+    "description": "Intel recently unveiled its \"Wildcat Lake\" Core 300 series of laptop processors, designed for the entry-level market with excellent CPU and GPU capabi...",
+    "status": "completed",
+    "timestamp": "2026-04-27T23:34:25.798Z",
+    "metadata": {
+      "link": "https://www.techpowerup.com/348551/intel-wildcat-lake-outruns-apples-macbook-neo-and-its-successor-in-first-benchmarks"
+    }
+  },
+  {
+    "id": "137f75de-4c6f-43f1-8a62-9066d75fb922",
+    "type": "hardware",
+    "title": "Gigabyte Announces Availability of the GO27Q24G WOLED Gaming Monitor",
+    "description": "Although originally announced back in January, Gigabytes GO27Q24G is now available in retail, at least in Europe for around €400. It's built around a ...",
+    "status": "pending",
+    "timestamp": "2026-04-27T23:34:25.798Z",
+    "metadata": {
+      "link": "https://www.techpowerup.com/348558/gigabyte-announces-availability-of-the-go27q24g-woled-gaming-monitor"
+    }
+  },
+  {
+    "id": "529be723-242e-49a5-8970-fcc9b0f734d7",
+    "type": "hardware",
+    "title": "Fedora Linux 44 Update Gets Delayed to April 21",
+    "description": "Fedora 44 was meant to be launched today, April 14, 2026, but a gander at the Fedora developer mailing list reveals that the workstation Linux distrib...",
+    "status": "pending",
+    "timestamp": "2026-04-27T23:34:25.798Z",
+    "metadata": {
+      "link": "https://www.techpowerup.com/348220/fedora-linux-44-update-gets-delayed-to-april-21"
+    }
+  },
+  {
+    "id": "2273564f-a255-4ea3-9b45-4139aeb50e10",
+    "type": "hardware",
+    "title": "Intel Turns Scrap Dies Into Usable CPUs as Demand Keeps Rising",
+    "description": "We have been reporting on the intense demand in the CPU sector currently sweeping the industry. AMD and Intel have sold out their inventories, and lea...",
+    "status": "completed",
+    "timestamp": "2026-04-27T23:34:25.798Z",
+    "metadata": {
+      "link": "https://www.techpowerup.com/348565/intel-turns-scrap-dies-into-usable-cpus-as-demand-keeps-rising"
+    }
+  },
+  {
+    "id": "bca1cdaf-199b-45e5-a83d-ecc8844edad6",
+    "type": "hardware",
+    "title": "GPD Box Mini PC and G2 eGPU Get MCIO 8i Connectivity With 512 Gbps Bandwidth",
+    "description": "GPD has officially announced its Box mini PC and its G-series eGPUs, which both now feature faster external PCIe interfaces for gaming and AI use case...",
+    "status": "pending",
+    "timestamp": "2026-04-27T23:34:25.797Z",
+    "metadata": {
+      "link": "https://www.techpowerup.com/348567/gpd-box-mini-pc-and-g2-egpu-get-mcio-8i-connectivity-with-512-gbps-bandwidth"
+    }
+  }
+]

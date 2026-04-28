@@ -5,10 +5,61 @@
   let swe = $state('');
   let lmsys = $state('');
   let features = $state('');
+  let quantization = $state('fp16');
+  let bpw = $state('16');
+
   
   let loading = $state(false);
   let message = $state('');
   let errorMsg = $state('');
+
+  let notifications = $state<any[]>([]);
+  let showNotifications = $state(false);
+  let unreadCount = $derived(notifications.filter(n => n.status === 'pending').length);
+
+  async function fetchNotifications() {
+    try {
+      const res = await fetch(`/api/admin/notifications?password=${password}`);
+      if (res.ok) {
+        notifications = await res.json();
+      }
+    } catch (err) {
+      console.error('Failed to fetch notifications', err);
+    }
+  }
+
+  async function markNotification(id: string, status: string) {
+    try {
+      const res = await fetch('/api/admin/notifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status, password })
+      });
+      if (res.ok) {
+        const index = notifications.findIndex(n => n.id === id);
+        if (index !== -1) notifications[index].status = status;
+      }
+    } catch (err) {
+      console.error('Failed to update notification', err);
+    }
+  }
+
+  async function triggerSync() {
+    try {
+      const res = await fetch(`/api/cron/sync?password=${password}`);
+      if (res.ok) {
+        await fetchNotifications();
+      }
+    } catch (err) {
+      console.error('Sync failed', err);
+    }
+  }
+
+  $effect(() => {
+    if (password) {
+      fetchNotifications();
+    }
+  });
   
   async function handleSubmit(e: Event) {
     e.preventDefault();
@@ -28,7 +79,9 @@
           mmlu: mmlu ? parseFloat(mmlu) : null,
           swe: swe ? parseFloat(swe) : null,
           lmsys: lmsys ? parseFloat(lmsys) : null,
-          features: features ? features.split(',').map(f => f.trim().toLowerCase()) : []
+          features: features ? features.split(',').map(f => f.trim().toLowerCase()) : [],
+          quantization: quantization,
+          bpw: bpw ? parseFloat(bpw) : null
         })
       });
       
@@ -69,9 +122,71 @@
     </div>
 
     <div class="max-w-2xl w-full mx-auto bg-[#0a0a0a] border border-[#333] p-8 rounded-geist shadow-[0_0_40px_rgba(0,0,0,0.5)] text-left animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-        <h2 class="text-2xl font-bold tracking-tight">Admin Dashboard</h2>
+      <div class="flex items-center justify-between gap-3 mb-2">
+        <div class="flex items-center gap-3">
+          <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+          <h2 class="text-2xl font-bold tracking-tight">Admin Dashboard</h2>
+        </div>
+        
+        <div class="relative">
+          <button 
+            onclick={() => showNotifications = !showNotifications}
+            class="p-2 rounded-full hover:bg-white/5 transition-colors relative"
+            title="Notifications"
+          >
+            <svg class="w-6 h-6 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            {#if unreadCount > 0}
+              <span class="absolute top-1 right-1 w-4 h-4 bg-vercel-blue text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {unreadCount}
+              </span>
+            {/if}
+          </button>
+
+          {#if showNotifications}
+            <div class="absolute right-0 mt-2 w-80 bg-[#0d0d0d] border border-[#333] rounded-geist shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in duration-200">
+              <div class="p-4 border-b border-[#333] flex justify-between items-center bg-black/50">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400">Notifications</h3>
+                <button onclick={triggerSync} class="text-[10px] text-vercel-blue hover:underline">Sync Now</button>
+              </div>
+              <div class="max-h-[400px] overflow-y-auto">
+                {#if notifications.length === 0}
+                  <p class="p-8 text-center text-gray-600 text-sm italic">No notifications yet.</p>
+                {:else}
+                  {#each notifications as n}
+                    <div class="p-4 border-b border-[#222] last:border-0 hover:bg-white/[0.02] transition-colors {n.status === 'pending' ? 'border-l-2 border-l-vercel-blue' : ''}">
+                      <div class="flex justify-between items-start gap-2 mb-1">
+                        <h4 class="text-[13px] font-bold {n.status === 'pending' ? 'text-white' : 'text-gray-500'}">{n.title}</h4>
+                        <span class="text-[9px] text-gray-600 shrink-0">{new Date(n.timestamp).toLocaleDateString()}</span>
+                      </div>
+                      <p class="text-[11px] text-gray-500 mb-3 line-clamp-2">{n.description}</p>
+                      <div class="flex gap-2">
+                        {#if n.type === 'model'}
+                          <button 
+                            onclick={() => { repoId = n.metadata.repoId; showNotifications = false; }}
+                            class="text-[10px] bg-vercel-blue/10 text-vercel-blue px-2 py-1 rounded hover:bg-vercel-blue/20 transition-colors font-bold"
+                          >
+                            Use Repo ID
+                          </button>
+                        {/if}
+                        <button 
+                          onclick={() => markNotification(n.id, n.status === 'pending' ? 'completed' : 'pending')}
+                          class="text-[10px] {n.status === 'pending' ? 'bg-white/5 text-gray-400' : 'bg-green-900/20 text-green-500'} px-2 py-1 rounded hover:bg-white/10 transition-colors"
+                        >
+                          {n.status === 'pending' ? 'Mark Done' : 'Undo'}
+                        </button>
+                        {#if n.metadata?.link}
+                          <a href={n.metadata.link} target="_blank" class="text-[10px] bg-white/5 text-gray-400 px-2 py-1 rounded hover:bg-white/10 transition-colors">View Link</a>
+                        {/if}
+                      </div>
+                    </div>
+                  {/each}
+                {/if}
+              </div>
+            </div>
+          {/if}
+        </div>
       </div>
       <p class="text-gray-400 mb-8 text-sm">Automated HuggingFace Integration (Localhost Only).</p>
     
@@ -146,6 +261,43 @@
           placeholder="tool_use, vision, coding" 
           class="w-full bg-black border border-[#333] rounded-[6px] px-4 py-2 text-sm focus:outline-none focus:border-vercel-blue transition-colors text-white placeholder-gray-600"
         />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="quantization" class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Quantization</label>
+          <select 
+            id="quantization" 
+            bind:value={quantization}
+            onchange={() => {
+              if (quantization === 'fp16') bpw = '16';
+              else if (quantization.startsWith('Q4')) bpw = '4';
+              else if (quantization.startsWith('Q8')) bpw = '8';
+              else if (quantization.startsWith('Q6')) bpw = '6';
+            }}
+            class="w-full bg-black border border-[#333] rounded-[6px] px-3 py-2.5 text-sm focus:outline-none focus:border-vercel-blue transition-colors text-white appearance-none"
+          >
+            <option value="fp16">FP16 (Original)</option>
+            <option value="Q4_K_M">Q4_K_M (GGUF)</option>
+            <option value="Q5_K_M">Q5_K_M (GGUF)</option>
+            <option value="Q6_K">Q6_K (GGUF)</option>
+            <option value="Q8_0">Q8_0 (GGUF)</option>
+            <option value="4bpw">4.0 bpw (EXL2)</option>
+            <option value="5bpw">5.0 bpw (EXL2)</option>
+            <option value="6bpw">6.0 bpw (EXL2)</option>
+          </select>
+        </div>
+        <div>
+          <label for="bpw" class="block text-xs font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Bits Per Weight</label>
+          <input 
+            id="bpw" 
+            type="number" 
+            step="0.1"
+            bind:value={bpw} 
+            placeholder="e.g., 4.5" 
+            class="w-full bg-black border border-[#333] rounded-[6px] px-3 py-2.5 text-sm focus:outline-none focus:border-vercel-blue transition-colors text-white placeholder-gray-600"
+          />
+        </div>
       </div>
 
       <div>
